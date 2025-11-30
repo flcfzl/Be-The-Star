@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Self-Analysis — Assessment</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <header class="center">
+      <h1>Self-Assessment Tool</h1>
+      <p class="subtitle">Rate each question from 0 (least) to 5 (most)</p>
+    </header>
+
+    <main class="card">
+      <div id="form-area"></div>
+      <div class="center" style="margin-top:20px;">
+        <button id="calc" class="btn">Calculate Results</button>
+      </div>
+    </main>
+
+    <section id="output" class="card hidden">
+      <h2>Your Results</h2>
+      <canvas id="radar" width="600" height="400"></canvas>
+
+      <div id="focus" class="focus-list"></div>
+
+      <p class="note">Tip: Re-take the test every 4–8 weeks to track progress.</p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
