@@ -212,6 +212,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     output.classList.remove("hidden");
 
+    // ⭐ Add baseline for star chart
+    const BASELINE = 30;
+    const radarValues = scores.map(s => Number(s) + BASELINE);
+
     const ctx = document.getElementById("radar").getContext("2d");
     if (radarChart) radarChart.destroy();
 
@@ -221,18 +225,27 @@ document.addEventListener("DOMContentLoaded", function () {
         labels: PILLARS,
         datasets: [{
           label: "Your Scores",
-          data: scores,
+          data: radarValues,
           fill: true,
           backgroundColor: "rgba(79, 70, 229, 0.15)",
           borderColor: "rgba(79, 70, 229, 0.9)",
-          pointBackgroundColor: "rgba(79, 70, 229, 0.9)"
+          pointBackgroundColor: "rgba(79, 70, 229, 0.9)",
+          tension: 0
         }]
       },
       options: {
         scales: {
-          r: { min: 0, max: 5, ticks: { stepSize: 1 } }
+          r: {
+            min: BASELINE,
+            max: BASELINE + 5,
+            ticks: { display: false },
+            grid: { color: "rgba(150,150,150,0.3)" },
+            angleLines: { color: "rgba(100,100,100,0.4)" }
+          }
         },
-        plugins: { legend: { display: false } }
+        plugins: {
+          legend: { display: false }
+        }
       }
     });
 
@@ -246,4 +259,3 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 });
-
