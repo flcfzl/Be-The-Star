@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  // Build Form
+  // Build the form
   const form = document.getElementById("form-area");
 
   PILLARS.forEach(pillar => {
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.appendChild(block);
   });
 
-  // Calculate Results
+  // Results
   const calcBtn = document.getElementById("calc");
   const output = document.getElementById("output");
   const focusDiv = document.getElementById("focus");
@@ -211,9 +211,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     output.classList.remove("hidden");
 
-    // ⭐ Star Radar Chart Baseline Logic
+    // ⭐ STAR CHART LOGIC — baseline + actual values
     const BASELINE = 30;
     const radarValues = scores.map(s => Number(s) + BASELINE);
+    const baselineArray = Array(PILLARS.length).fill(BASELINE);
 
     const ctx = document.getElementById("radar").getContext("2d");
     if (radarChart) radarChart.destroy();
@@ -222,15 +223,25 @@ document.addEventListener("DOMContentLoaded", function () {
       type: "radar",
       data: {
         labels: PILLARS,
-        datasets: [{
-          label: "Your Scores",
-          data: radarValues,
-          fill: true,
-          backgroundColor: "rgba(79, 70, 229, 0.15)",
-          borderColor: "rgba(79, 70, 229, 0.9)",
-          pointBackgroundColor: "rgba(79, 70, 229, 0.9)",
-          tension: 0
-        }]
+        datasets: [
+          {
+            label: "Baseline",
+            data: baselineArray,
+            fill: true,
+            backgroundColor: "rgba(180,180,180,0.12)",
+            borderColor: "rgba(150,150,150,0.35)",
+            pointRadius: 0
+          },
+          {
+            label: "Your Scores",
+            data: radarValues,
+            fill: true,
+            backgroundColor: "rgba(79, 70, 229, 0.15)",
+            borderColor: "rgba(79, 70, 229, 0.9)",
+            pointBackgroundColor: "rgba(79, 70, 229, 0.9)",
+            tension: 0
+          }
+        ]
       },
       options: {
         scales: {
@@ -238,30 +249,16 @@ document.addEventListener("DOMContentLoaded", function () {
             min: BASELINE,
             max: BASELINE + 5,
             beginAtZero: false,
-            ticks: {
-              display: false
-            },
-            pointLabels: {
-              font: {
-                size: 14
-              },
-              color: "#000"
-            },
-            angleLines: {
-              color: "rgba(100,100,100,0.4)"
-            },
-            grid: {
-              color: "rgba(150,150,150,0.3)"
-            }
+            ticks: { display: false },
+            grid: { color: "rgba(150,150,150,0.3)" },
+            angleLines: { color: "rgba(100,100,100,0.4)" }
           }
         },
-        plugins: {
-          legend: { display: false }
-        }
+        plugins: { legend: { display: false } }
       }
     });
 
-    // Show Top 3 Lowest Pillars
+    // Top 3 lowest pillars
     const indexed = PILLARS.map((p, i) => ({ p, score: scores[i] }));
     indexed.sort((a, b) => a.score - b.score);
 
