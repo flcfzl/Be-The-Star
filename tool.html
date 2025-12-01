@@ -1,261 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Self-Analysis — Assessment</title>
 
-  const PILLARS = [
-    "Physical Health",
-    "Mental & Emotional Wellbeing",
-    "Relationships & Social",
-    "Career & Purpose",
-    "Financial Wellness",
-    "Personal Growth & Learning",
-    "Recreation & Creativity",
-    "Environment & Living Situation"
-  ];
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-  const QUESTIONS = {
-    "Physical Health": [
-      "I wake up feeling physically refreshed and ready to start the day without needing stimulants.",
-      "I complete at least 20–30 minutes of deliberate physical activity in a typical day.",
-      "When I notice early signs of illness, I adjust my routine or rest that day.",
-      "I can comfortably walk 3–4 km without feeling unusually tired.",
-      "My meals keep my energy levels consistent without major dips.",
-      "I manage stress without developing symptoms like headaches or acidity.",
-      "I drink enough water throughout the day.",
-      "I get preventive health checkups at least once a year.",
-      "I incorporate movement or stretching even on busy days.",
-      "My sleep schedule stays consistent.",
-      "I can identify why I feel tired when it happens.",
-      "I can lift and carry everyday items without discomfort.",
-      "I avoid skipping meals even during hectic periods.",
-      "I follow a good recovery routine when I get sick.",
-      "Lifestyle-related issues like acidity affect me rarely."
-    ],
+<body>
+  <div class="container">
+    <header class="center">
+      <h1>Self-Assessment Tool</h1>
+      <p class="subtitle">Rate each question from 0 (least) to 5 (most)</p>
+    </header>
 
-    "Mental & Emotional Wellbeing": [
-      "I can calm myself within 10–15 minutes when overwhelmed.",
-      "I can correctly identify my emotions during tough moments.",
-      "I handle criticism without spiralling.",
-      "I recover emotionally from setbacks within a few days.",
-      "I avoid worst-case overthinking.",
-      "I express feelings openly to at least one trusted person.",
-      "I can complete essential tasks even on low-energy days.",
-      "I maintain hobbies that improve my emotional state.",
-      "I notice early signs of burnout.",
-      "I can separate thoughts from facts during stress.",
-      "I understand my emotional triggers.",
-      "I practise self-care at least twice a week.",
-      "I forgive myself quickly after mistakes.",
-      "I ask for support when needed.",
-      "I maintain a positive outlook overall."
-    ],
+    <main class="card">
+      <!-- QUESTIONS WILL BE GENERATED HERE -->
+      <div id="form-area"></div>
 
-    "Relationships & Social": [
-      "I have at least one person I can call anytime for support.",
-      "I communicate needs clearly without aggression.",
-      "I address conflicts within a reasonable time.",
-      "I check in on important people regularly.",
-      "I set boundaries calmly when needed.",
-      "I say ‘no’ without guilt when necessary.",
-      "I initiate conversations or plans.",
-      "My relationships feel balanced and reciprocal.",
-      "I celebrate others’ achievements without comparison.",
-      "I avoid gossip as a primary bonding tool.",
-      "I form new connections in new environments.",
-      "I resolve misunderstandings instead of withdrawing.",
-      "I spend quality time with important people.",
-      "I share vulnerabilities with trusted people.",
-      "My relationships energize me more than drain me."
-    ],
+      <div class="center" style="margin-top:20px;">
+        <button id="calc" class="btn">Calculate Results</button>
+      </div>
+    </main>
 
-    "Career & Purpose": [
-      "I can articulate why my work is meaningful.",
-      "I feel confident about my next career step.",
-      "I spend at least two hours weekly on skill development.",
-      "I can focus deeply without frequent distractions.",
-      "I actively seek feedback.",
-      "I feel valued for my contributions.",
-      "I have mentors or peers guiding me.",
-      "I take career-advancing risks.",
-      "My work aligns with my strengths.",
-      "I track progress toward my goals.",
-      "I balance urgent tasks with long-term priorities.",
-      "I don’t carry chronic stress home.",
-      "I have a backup plan for career disruptions.",
-      "I’m proud of my achievements this year.",
-      "I pursue purpose-driven activities outside work."
-    ],
+    <section id="output" class="card hidden">
+      <h2>Your Results</h2>
 
-    "Financial Wellness": [
-      "I review and adjust my spending monthly.",
-      "I maintain an emergency fund of at least three months.",
-      "I save or invest regularly.",
-      "I know where my money goes.",
-      "I avoid impulse purchases except rarely.",
-      "I am free of high-interest debt or have a payoff plan.",
-      "I compare options before major purchases.",
-      "I understand basic tax planning.",
-      "I maintain necessary insurance.",
-      "I review unused subscriptions regularly.",
-      "I have clear long-term financial goals.",
-      "I maintain a realistic budget.",
-      "I track my financial health yearly.",
-      "I discuss major money decisions with affected partners.",
-      "I adjust spending as life goals change."
-    ],
+      <!-- RADAR CHART -->
+      <canvas id="radar" width="600" height="400"></canvas>
 
-    "Personal Growth & Learning": [
-      "I dedicate fixed weekly time for learning.",
-      "I am working on a long-term skill or learning project.",
-      "I explore new subjects monthly.",
-      "I set measurable learning goals.",
-      "I reflect on new learnings.",
-      "I track my progress with notes.",
-      "I apply new knowledge in real life.",
-      "I step outside my comfort zone regularly.",
-      "I ask curious questions daily.",
-      "I balance depth and breadth in learning.",
-      "I seek feedback to grow.",
-      "I identify a new improvement area monthly.",
-      "I invest time or money in learning.",
-      "I stay consistent even when motivation is low.",
-      "I celebrate small milestones."
-    ],
+      <!-- FOCUS AREAS -->
+      <div id="focus" class="focus-list"></div>
 
-    "Recreation & Creativity": [
-      "I have hobbies that refresh me.",
-      "I schedule downtime that relaxes me.",
-      "I try new creative or recreational activities.",
-      "I include small adventures in my month.",
-      "I immerse in activities without checking my phone.",
-      "I rotate hobbies to stay inspired.",
-      "I keep a list of creative ideas.",
-      "I protect leisure time even when busy.",
-      "I use creative outlets for emotions.",
-      "I enjoy solo recreation comfortably.",
-      "I balance digital and physical recreation.",
-      "I allow spontaneous fun regularly.",
-      "I take small creative challenges.",
-      "I maintain at least one long-term creative project.",
-      "I revisit old hobbies sometimes."
-    ],
+      <p class="note">Tip: Re-take the test every 4–8 weeks to track progress.</p>
+    </section>
+  </div>
 
-    "Environment & Living Situation": [
-      "My living space supports productivity and relaxation.",
-      "I declutter or organize regularly.",
-      "I maintain a reliable system for bills.",
-      "I feel safe where I live.",
-      "I have tools or help for home issues.",
-      "My home reflects my personality.",
-      "I can host someone comfortably.",
-      "I keep important documents accessible.",
-      "I prepare for seasonal needs.",
-      "I fix noise or lighting issues.",
-      "I maintain cleaning routines.",
-      "I adjust my home during life changes.",
-      "I invest in improvements that enhance living.",
-      "I have a restorative corner at home.",
-      "I review my living choices periodically."
-    ]
-  };
-
-  // Build Form
-  const form = document.getElementById("form-area");
-
-  PILLARS.forEach(pillar => {
-    const block = document.createElement("div");
-    block.className = "card";
-    block.innerHTML = `<h3>${pillar}</h3>`;
-
-    QUESTIONS[pillar].forEach((q, index) => {
-      const id = `${pillar}-${index}`.replace(/\s+/g, "-");
-      const row = document.createElement("div");
-      row.style.marginBottom = "12px";
-
-      row.innerHTML = `
-        <label>${index + 1}. ${q}</label><br>
-        <input type="range" min="0" max="5" value="3" step="1" id="${id}">
-        <span id="${id}-value">3</span>/5
-      `;
-
-      block.appendChild(row);
-
-      setTimeout(() => {
-        document.getElementById(id).addEventListener("input", (e) => {
-          document.getElementById(`${id}-value`).textContent = e.target.value;
-        });
-      }, 10);
-    });
-
-    form.appendChild(block);
-  });
-
-  // Results
-  const calcBtn = document.getElementById("calc");
-  const output = document.getElementById("output");
-  const focusDiv = document.getElementById("focus");
-  let radarChart;
-
-  calcBtn.addEventListener("click", () => {
-    const scores = [];
-
-    PILLARS.forEach(pillar => {
-      const qList = QUESTIONS[pillar];
-      let sum = 0;
-
-      qList.forEach((_, i) => {
-        const id = `${pillar}-${i}`.replace(/\s+/g, "-");
-        sum += Number(document.getElementById(id).value);
-      });
-
-      scores.push((sum / qList.length).toFixed(1));
-    });
-
-    output.classList.remove("hidden");
-
-    // ⭐ Star Radar Chart Logic
-    const BASELINE = 30;
-    const radarValues = scores.map(s => Number(s) + BASELINE);
-
-    const ctx = document.getElementById("radar").getContext("2d");
-    if (radarChart) radarChart.destroy();
-
-    radarChart = new Chart(ctx, {
-      type: "radar",
-      data: {
-        labels: PILLARS,
-        datasets: [{
-          label: "Your Scores",
-          data: radarValues,
-          fill: true,
-          backgroundColor: "rgba(79, 70, 229, 0.15)",
-          borderColor: "rgba(79, 70, 229, 0.9)",
-          pointBackgroundColor: "rgba(79, 70, 229, 0.9)",
-          tension: 0
-        }]
-      },
-      options: {
-        scales: {
-          r: {
-            min: BASELINE,
-            max: BASELINE + 5,
-            ticks: { display: false },
-            grid: { color: "rgba(150,150,150,0.3)" },
-            angleLines: { color: "rgba(100,100,100,0.4)" }
-          }
-        },
-        plugins: {
-          legend: { display: false }
-        }
-      }
-    });
-
-    // Top 3 Lowest Pillars
-    const indexed = PILLARS.map((p, i) => ({ p, score: scores[i] }));
-    indexed.sort((a, b) => a.score - b.score);
-
-    const low = indexed.slice(0, 3);
-    focusDiv.innerHTML =
-      `<h3>Your Top 3 Focus Areas</h3>` +
-      low.map(item => `<p><strong>${item.p}</strong>: ${item.score}/5</p>`).join("");
-  });
-
-});
+  <!-- LOAD THE REAL SCRIPT -->
+  <script src="script.js"></script>
+</body>
+</html>
