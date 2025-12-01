@@ -4,7 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Self-Analysis — Assessment</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -24,14 +28,18 @@
 
     <section id="output" class="card hidden">
       <h2>Your Results</h2>
+
+      <!-- Radar Chart -->
       <canvas id="radar" width="600" height="400"></canvas>
 
+      <!-- Focus Areas -->
       <div id="focus" class="focus-list"></div>
 
       <p class="note">Tip: Re-take the test every 4–8 weeks to track progress.</p>
     </section>
   </div>
 
-  <script src="script.js"></script>
+  <!-- ⭐ IMPORTANT: Correct script path -->
+  <script src="scripts/script.js"></script>
 </body>
 </html>
