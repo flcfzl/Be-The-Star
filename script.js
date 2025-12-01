@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  // Build the form
+  // Build Form
   const form = document.getElementById("form-area");
 
   PILLARS.forEach(pillar => {
@@ -166,10 +166,9 @@ document.addEventListener("DOMContentLoaded", function () {
     block.innerHTML = `<h3>${pillar}</h3>`;
 
     QUESTIONS[pillar].forEach((q, index) => {
+      const id = `${pillar}-${index}`.replace(/\s+/g, "-");
       const row = document.createElement("div");
       row.style.marginBottom = "12px";
-
-      const id = `${pillar}-${index}`.replace(/\s+/g, "-");
 
       row.innerHTML = `
         <label>${index + 1}. ${q}</label><br>
@@ -189,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.appendChild(block);
   });
 
-  // Calculate results
+  // Calculate Results
   const calcBtn = document.getElementById("calc");
   const output = document.getElementById("output");
   const focusDiv = document.getElementById("focus");
@@ -212,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     output.classList.remove("hidden");
 
-    // ⭐ Add baseline for star chart
+    // ⭐ Star Radar Chart Baseline Logic
     const BASELINE = 30;
     const radarValues = scores.map(s => Number(s) + BASELINE);
 
@@ -238,9 +237,22 @@ document.addEventListener("DOMContentLoaded", function () {
           r: {
             min: BASELINE,
             max: BASELINE + 5,
-            ticks: { display: false },
-            grid: { color: "rgba(150,150,150,0.3)" },
-            angleLines: { color: "rgba(100,100,100,0.4)" }
+            beginAtZero: false,
+            ticks: {
+              display: false
+            },
+            pointLabels: {
+              font: {
+                size: 14
+              },
+              color: "#000"
+            },
+            angleLines: {
+              color: "rgba(100,100,100,0.4)"
+            },
+            grid: {
+              color: "rgba(150,150,150,0.3)"
+            }
           }
         },
         plugins: {
@@ -249,10 +261,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    // Show Top 3 Lowest Pillars
     const indexed = PILLARS.map((p, i) => ({ p, score: scores[i] }));
     indexed.sort((a, b) => a.score - b.score);
-    const low = indexed.slice(0, 3);
 
+    const low = indexed.slice(0, 3);
     focusDiv.innerHTML =
       `<h3>Your Top 3 Focus Areas</h3>` +
       low.map(item => `<p><strong>${item.p}</strong>: ${item.score}/5</p>`).join("");
