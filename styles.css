@@ -78,7 +78,7 @@ input[type="range"]:focus {
 }
 
 /* ----------------------------------------------
-   OUTPUT & FOCUS AREAS
+   VISIBILITY
 ---------------------------------------------- */
 
 #output.hidden {
@@ -91,37 +91,35 @@ input[type="range"]:focus {
 }
 
 /* ----------------------------------------------
-   ⭐ RADAR CHART AREA (D3)
-   — Clean background
-   — No grid
-   — No artifacts
+   ⭐ RADAR CHART AREA (D3 FIXED)
+   Ensures D3 gets width > 0
 ---------------------------------------------- */
 
 #radar {
-  width: 100%;
-  height: 450px;
-  margin-top: 20px;
+  width: 100% !important;
+  min-width: 300px !important;
+  height: 450px !important;
+  display: block !important;
 
-  /* Remove ANY old chart backgrounds */
   background: none !important;
   box-shadow: none !important;
   border: none !important;
 }
 
-/* D3 SVG must remain clean */
+/* D3 SVG must stay transparent */
 #radar svg {
   background: transparent !important;
   overflow: visible;
 }
 
-/* Make sure no canvas styling leaks in */
+/* Ensure NO old Chart.js styles leak in */
 canvas {
   background: none !important;
   box-shadow: none !important;
 }
 
 /* ----------------------------------------------
-   RESPONSIVE DESIGN
+   RESPONSIVE
 ---------------------------------------------- */
 
 @media (max-width: 768px) {
@@ -135,7 +133,7 @@ canvas {
 }
 
 /* ----------------------------------------------
-   OPTIONAL: DARK MODE (auto)
+   OPTIONAL DARK MODE
 ---------------------------------------------- */
 
 @media (prefers-color-scheme: dark) {
