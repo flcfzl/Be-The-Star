@@ -157,9 +157,9 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  // Build Questions
   const form = document.getElementById("form-area");
 
+  // Build the questions
   PILLARS.forEach(pillar => {
     const block = document.createElement("div");
     block.className = "card";
@@ -171,10 +171,10 @@ document.addEventListener("DOMContentLoaded", function () {
       row.style.marginBottom = "12px";
 
       row.innerHTML = `
-        <label>${index + 1}. ${q}</label><br>
-        <input type="range" min="0" max="5" value="3" step="1" id="${id}">
-        <span id="${id}-value">3</span>/5
-      `;
+          <label>${index + 1}. ${q}</label><br>
+          <input type="range" min="0" max="5" value="3" step="1" id="${id}">
+          <span id="${id}-value">3</span>/5
+        `;
 
       block.appendChild(row);
 
@@ -188,12 +188,10 @@ document.addEventListener("DOMContentLoaded", function () {
     form.appendChild(block);
   });
 
-  // Results
-  const calcBtn = document.getElementById("calc");
   const output = document.getElementById("output");
   const focusDiv = document.getElementById("focus");
-  let radarChart;
 
+  const calcBtn = document.getElementById("calc");
   calcBtn.addEventListener("click", () => {
     const scores = [];
 
@@ -211,47 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     output.classList.remove("hidden");
 
-    // ⭐ Baseline + actual values
-    const BASELINE = 30;
-    const radarValues = scores.map(s => Number(s) + BASELINE);
-    const baselineArray = Array(PILLARS.length).fill(BASELINE);
-
-    // Init ECharts
-    const chartDom = document.getElementById('radar');
-    const myChart = echarts.init(chartDom);
-
-    const option = {
-      tooltip: {},
-      radar: {
-        indicator: PILLARS.map(() => ({ min: BASELINE, max: BASELINE + 5 })),
-        radius: '70%',
-        splitNumber: 5,
-        axisLine: { color: "#aaa" },
-        splitLine: { color: "rgba(150,150,150,0.4)" },
-        splitArea: { show: false },
-      },
-      series: [
-        {
-          name: "Baseline",
-          type: "radar",
-          data: [{ value: baselineArray }],
-          lineStyle: { color: "#bbbbbb", width: 1 },
-          areaStyle: { color: "rgba(180,180,180,0.15)" },
-          symbol: "none"
-        },
-        {
-          name: "Your Score",
-          type: "radar",
-          data: [{ value: radarValues }],
-          lineStyle: { color: "rgba(79,70,229,0.9)", width: 2 },
-          areaStyle: { color: "rgba(79,70,229,0.20)" },
-          symbol: "circle",
-          symbolSize: 4
-        }
-      ]
-    };
-
-    myChart.setOption(option);
+    drawStarRadar(scores);
 
     // Top 3 lowest pillars
     const indexed = PILLARS.map((p, i) => ({ p, score: scores[i] }));
@@ -260,7 +218,83 @@ document.addEventListener("DOMContentLoaded", function () {
     const low = indexed.slice(0, 3);
     focusDiv.innerHTML =
       `<h3>Your Top 3 Focus Areas</h3>` +
-      low.map(item => `<p><strong>${item.p}</strong>: ${item.score}/5</p>`).join("");
+      low.map(item =>
+        `<p><strong>${item.p}</strong>: ${item.score}/5</p>`
+      ).join("");
   });
+
+  // ⭐ MAIN D3 STAR RADAR FUNCTION
+  function drawStarRadar(scores) {
+
+    const BASELINE = 30;
+    const scaledScores = scores.map(s => BASELINE + Number(s));
+
+    const width = document.getElementById("radar").clientWidth;
+    const height = 450;
+    const radius = Math.min(width, height) / 2 - 20;
+
+    d3.select("#radar").selectAll("*").remove();
+
+    const svg = d3.select("#radar")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+    // Scale: 30–35 maps to inner–outer ring
+    const rScale = d3.scaleLinear()
+      .domain([BASELINE, BASELINE + 5])
+      .range([radius * 0.3, radius]);
+
+    // Create angle for each pillar
+    const angleSlice = (2 * Math.PI) / PILLARS.length;
+
+    // Baseline circle path
+    const baselinePoints = PILLARS.map((_, i) => {
+      const angle = i * angleSlice - Math.PI / 2;
+      return [
+        rScale(BASELINE) * Math.cos(angle),
+        rScale(BASELINE) * Math.sin(angle)
+      ];
+    });
+
+    // Actual score polygon
+    const scorePoints = scaledScores.map((v, i) => {
+      const angle = i * angleSlice - Math.PI / 2;
+      return [
+        rScale(v) * Math.cos(angle),
+        rScale(v) * Math.sin(angle)
+      ];
+    });
+
+    const line = d3.line().curve(d3.curveLinearClosed);
+
+    // Draw baseline inner ring
+    svg.append("path")
+      .datum(baselinePoints)
+      .attr("d", line)
+      .attr("fill", "rgba(180,180,180,0.15)")
+      .attr("stroke", "rgba(150,150,150,0.35)")
+      .attr("stroke-width", 1.2);
+
+    // Draw actual radar star
+    svg.append("path")
+      .datum(scorePoints)
+      .attr("d", line)
+      .attr("fill", "rgba(79, 70, 229, 0.15)")
+      .attr("stroke", "rgba(79, 70, 229, 0.9)")
+      .attr("stroke-width", 2);
+
+    // Draw points on the star
+    svg.selectAll(".star-point")
+      .data(scorePoints)
+      .enter()
+      .append("circle")
+      .attr("cx", d => d[0])
+      .attr("cy", d => d[1])
+      .attr("r", 4)
+      .attr("fill", "rgba(79, 70, 229, 1)");
+  }
 
 });
