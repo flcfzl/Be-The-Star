@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  // Build the form
+  // Build Questions
   const form = document.getElementById("form-area");
 
   PILLARS.forEach(pillar => {
@@ -211,52 +211,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
     output.classList.remove("hidden");
 
-    // ⭐ STAR CHART LOGIC — baseline + actual values
+    // ⭐ Baseline + actual values
     const BASELINE = 30;
     const radarValues = scores.map(s => Number(s) + BASELINE);
     const baselineArray = Array(PILLARS.length).fill(BASELINE);
 
-    const ctx = document.getElementById("radar").getContext("2d");
-    if (radarChart) radarChart.destroy();
+    // Init ECharts
+    const chartDom = document.getElementById('radar');
+    const myChart = echarts.init(chartDom);
 
-    radarChart = new Chart(ctx, {
-      type: "radar",
-      data: {
-        labels: PILLARS,
-        datasets: [
-          {
-            label: "Baseline",
-            data: baselineArray,
-            fill: true,
-            backgroundColor: "rgba(180,180,180,0.12)",
-            borderColor: "rgba(150,150,150,0.35)",
-            pointRadius: 0
-          },
-          {
-            label: "Your Scores",
-            data: radarValues,
-            fill: true,
-            backgroundColor: "rgba(79, 70, 229, 0.15)",
-            borderColor: "rgba(79, 70, 229, 0.9)",
-            pointBackgroundColor: "rgba(79, 70, 229, 0.9)",
-            tension: 0
-          }
-        ]
+    const option = {
+      tooltip: {},
+      radar: {
+        indicator: PILLARS.map(() => ({ min: BASELINE, max: BASELINE + 5 })),
+        radius: '70%',
+        splitNumber: 5,
+        axisLine: { color: "#aaa" },
+        splitLine: { color: "rgba(150,150,150,0.4)" },
+        splitArea: { show: false },
       },
-      options: {
-        scales: {
-          r: {
-            min: BASELINE,
-            max: BASELINE + 5,
-            beginAtZero: false,
-            ticks: { display: false },
-            grid: { color: "rgba(150,150,150,0.3)" },
-            angleLines: { color: "rgba(100,100,100,0.4)" }
-          }
+      series: [
+        {
+          name: "Baseline",
+          type: "radar",
+          data: [{ value: baselineArray }],
+          lineStyle: { color: "#bbbbbb", width: 1 },
+          areaStyle: { color: "rgba(180,180,180,0.15)" },
+          symbol: "none"
         },
-        plugins: { legend: { display: false } }
-      }
-    });
+        {
+          name: "Your Score",
+          type: "radar",
+          data: [{ value: radarValues }],
+          lineStyle: { color: "rgba(79,70,229,0.9)", width: 2 },
+          areaStyle: { color: "rgba(79,70,229,0.20)" },
+          symbol: "circle",
+          symbolSize: 4
+        }
+      ]
+    };
+
+    myChart.setOption(option);
 
     // Top 3 lowest pillars
     const indexed = PILLARS.map((p, i) => ({ p, score: scores[i] }));
