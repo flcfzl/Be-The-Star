@@ -7,8 +7,8 @@
 
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- ECHARTS LIBRARY -->
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <!-- ONLY D3 (NO OTHER LIBRARIES) -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
@@ -19,8 +19,6 @@
     </header>
 
     <main class="card">
-
-      <!-- QUESTIONS WILL BE GENERATED HERE -->
       <div id="form-area"></div>
 
       <div class="center" style="margin-top:20px;">
@@ -31,17 +29,16 @@
     <section id="output" class="card hidden">
       <h2>Your Results</h2>
 
-      <!-- ⭐ ECHARTS RADAR CONTAINER -->
-      <div id="radar" style="width:100%; height:400px;"></div>
+      <!-- ⭐ D3 needs an empty div, NOT canvas -->
+      <div id="radar" style="width:100%; height:450px;"></div>
 
-      <!-- FOCUS AREAS -->
       <div id="focus" class="focus-list"></div>
 
       <p class="note">Tip: Re-take the test every 4–8 weeks to track progress.</p>
     </section>
   </div>
 
-  <!-- YOUR MAIN SCRIPT -->
+  <!-- Load ONLY D3 script -->
   <script src="script.js"></script>
 </body>
 </html>
