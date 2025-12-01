@@ -6,7 +6,9 @@
   <title>Self-Analysis — Assessment</title>
 
   <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ECHARTS LIBRARY -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 
 <body>
@@ -17,6 +19,7 @@
     </header>
 
     <main class="card">
+
       <!-- QUESTIONS WILL BE GENERATED HERE -->
       <div id="form-area"></div>
 
@@ -28,8 +31,8 @@
     <section id="output" class="card hidden">
       <h2>Your Results</h2>
 
-      <!-- RADAR CHART -->
-      <canvas id="radar" width="600" height="400"></canvas>
+      <!-- ⭐ ECHARTS RADAR CONTAINER -->
+      <div id="radar" style="width:100%; height:400px;"></div>
 
       <!-- FOCUS AREAS -->
       <div id="focus" class="focus-list"></div>
@@ -38,7 +41,7 @@
     </section>
   </div>
 
-  <!-- LOAD THE REAL SCRIPT -->
+  <!-- YOUR MAIN SCRIPT -->
   <script src="script.js"></script>
 </body>
 </html>
