@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const form = document.getElementById("form-area");
 
-  // Build the questions
+  // BUILD FORM
   PILLARS.forEach(pillar => {
     const block = document.createElement("div");
     block.className = "card";
@@ -171,13 +171,14 @@ document.addEventListener("DOMContentLoaded", function () {
       row.style.marginBottom = "12px";
 
       row.innerHTML = `
-          <label>${index + 1}. ${q}</label><br>
-          <input type="range" min="0" max="5" value="3" step="1" id="${id}">
-          <span id="${id}-value">3</span>/5
-        `;
+        <label>${index + 1}. ${q}</label><br>
+        <input type="range" min="0" max="5" value="3" step="1" id="${id}">
+        <span id="${id}-value">3</span>/5
+      `;
 
       block.appendChild(row);
 
+      // Live update
       setTimeout(() => {
         document.getElementById(id).addEventListener("input", (e) => {
           document.getElementById(`${id}-value`).textContent = e.target.value;
@@ -191,8 +192,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const output = document.getElementById("output");
   const focusDiv = document.getElementById("focus");
 
-  const calcBtn = document.getElementById("calc");
-  calcBtn.addEventListener("click", () => {
+  // BUTTON CLICK
+  document.getElementById("calc").addEventListener("click", () => {
     const scores = [];
 
     PILLARS.forEach(pillar => {
@@ -209,27 +210,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
     output.classList.remove("hidden");
 
-    drawStarRadar(scores);
+    // IMPORTANT: Wait for layout before drawing radar
+    setTimeout(() => {
+      drawStarRadar(scores);
+    }, 30);
 
-    // Top 3 lowest pillars
+    // TOP 3 AREAS
     const indexed = PILLARS.map((p, i) => ({ p, score: scores[i] }));
     indexed.sort((a, b) => a.score - b.score);
 
     const low = indexed.slice(0, 3);
     focusDiv.innerHTML =
       `<h3>Your Top 3 Focus Areas</h3>` +
-      low.map(item =>
-        `<p><strong>${item.p}</strong>: ${item.score}/5</p>`
-      ).join("");
+      low.map(item => `<p><strong>${item.p}</strong>: ${item.score}/5</p>`).join("");
   });
 
-  // ⭐ MAIN D3 STAR RADAR FUNCTION
+  // ⭐ D3 STAR RADAR
   function drawStarRadar(scores) {
 
     const BASELINE = 30;
     const scaledScores = scores.map(s => BASELINE + Number(s));
 
-    const width = document.getElementById("radar").clientWidth;
+    const radarDiv = document.getElementById("radar");
+
+    // Ensure width exists
+    radarDiv.style.display = "block";
+    radarDiv.style.minWidth = "300px";
+
+    const width = radarDiv.getBoundingClientRect().width || 400;
     const height = 450;
     const radius = Math.min(width, height) / 2 - 20;
 
@@ -242,15 +250,12 @@ document.addEventListener("DOMContentLoaded", function () {
       .append("g")
       .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
-    // Scale: 30–35 maps to inner–outer ring
+    const angleSlice = (2 * Math.PI) / PILLARS.length;
+
     const rScale = d3.scaleLinear()
       .domain([BASELINE, BASELINE + 5])
       .range([radius * 0.3, radius]);
 
-    // Create angle for each pillar
-    const angleSlice = (2 * Math.PI) / PILLARS.length;
-
-    // Baseline circle path
     const baselinePoints = PILLARS.map((_, i) => {
       const angle = i * angleSlice - Math.PI / 2;
       return [
@@ -259,7 +264,6 @@ document.addEventListener("DOMContentLoaded", function () {
       ];
     });
 
-    // Actual score polygon
     const scorePoints = scaledScores.map((v, i) => {
       const angle = i * angleSlice - Math.PI / 2;
       return [
@@ -270,31 +274,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const line = d3.line().curve(d3.curveLinearClosed);
 
-    // Draw baseline inner ring
+    // Inner ring
     svg.append("path")
       .datum(baselinePoints)
       .attr("d", line)
-      .attr("fill", "rgba(180,180,180,0.15)")
-      .attr("stroke", "rgba(150,150,150,0.35)")
-      .attr("stroke-width", 1.2);
+      .attr("fill", "rgba(180,180,180,0.12)")
+      .attr("stroke", "rgba(150,150,150,0.4)")
+      .attr("stroke-width", 1.3);
 
-    // Draw actual radar star
+    // Outer star
     svg.append("path")
       .datum(scorePoints)
       .attr("d", line)
-      .attr("fill", "rgba(79, 70, 229, 0.15)")
-      .attr("stroke", "rgba(79, 70, 229, 0.9)")
-      .attr("stroke-width", 2);
+      .attr("fill", "rgba(79, 70, 229, 0.2)")
+      .attr("stroke", "rgba(79, 70, 229, 0.95)")
+      .attr("stroke-width", 2.5);
 
-    // Draw points on the star
+    // Star points
     svg.selectAll(".star-point")
       .data(scorePoints)
       .enter()
       .append("circle")
       .attr("cx", d => d[0])
       .attr("cy", d => d[1])
-      .attr("r", 4)
-      .attr("fill", "rgba(79, 70, 229, 1)");
+      .attr("r", 4.2)
+      .attr("fill", "#4f46e5");
   }
 
 });
